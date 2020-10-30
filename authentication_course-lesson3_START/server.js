@@ -18,7 +18,6 @@ app.get('/', (req, res) => {
 
 app.get('/dashboard', verifyToken, (req, res) => {
   console.log('dashboard server')
-  console.log('req:', req)
   jwt.verify(req.token, 'the_secret_key', err => {
     if (err) {
       res.sendStatus(401)
@@ -31,21 +30,26 @@ app.get('/dashboard', verifyToken, (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-  console.log('register server', req.body)
   if (req.body) {
     const user = {
       name: req.body.name,
       email: req.body.email,
       password: req.body.password
-      // In a production app, you'll want to encrypt the password
     }
 
     const data = JSON.stringify(user, null, 2)
     var dbUserEmail = require('./db/user.json').email
 
+    var errorsToSend = []
+
     if (dbUserEmail === req.body.email) {
-      console.log('ERROR - register server - user already registered', dbUserEmail, req.body.email)
-      res.sendStatus(400)
+      errorsToSend.push('An account with this email already exists.')
+    }
+    if (user.password.length < 5) { // validate password is in correct format
+      errorsToSend.push('Password too short.')
+    }
+    if (errorsToSend.length > 0) { // check if there are any errors
+      res.status(400).json({ errors: errorsToSend }) // send errors back with status code
     } else {
       fs.writeFile('./db/user.json', data, err => {
         if (err) {
@@ -70,32 +74,28 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
   const userDB = fs.readFileSync('./db/user.json')
   const userInfo = JSON.parse(userDB)
-
-  console.log('login server', req.body)
-
   if (
     req.body &&
     req.body.email === userInfo.email &&
     req.body.password === userInfo.password
   ) {
     const token = jwt.sign({ userInfo }, 'the_secret_key')
-    // In a production app, you'll want the secret key to be an environment variable
     res.json({
       token,
       email: userInfo.email,
       name: userInfo.name
     })
   } else {
-    console.log('ERROR - login server', req.body)
-    res.sendStatus(400)
+    res.status(401).json({ error: 'Invalid login. Please try again.'})
   }
 })
 
-// MIDDLEWARE
 function verifyToken (req, res, next) {
+  console.log("verification du token ...")
+  
   const bearerHeader = req.headers['authorization']
 
-  console.log('c le bearer', req)
+  console.log('le header d\'authorization', req.headers['authorization'])
 
   if (typeof bearerHeader !== 'undefined') {
     const bearer = bearerHeader.split(' ')

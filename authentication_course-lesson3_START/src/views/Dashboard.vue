@@ -4,9 +4,7 @@
     <template v-if="!isLoading">
       <EventCard v-for="event in events" :key="event.id" :event="event" />
     </template>
-    <p v-else>
-      Loading events
-    </p>
+    <p v-else>Loading events</p>
   </div>
 </template>
 
@@ -22,13 +20,7 @@ export default {
       events: []
     }
   },
-  computed: {
-    token () {
-      return this.$store
-    }
-  },
   created () {
-    console.log('created', this.token)
     axios.get('//localhost:3000/dashboard').then(({ data }) => {
       this.events = data.events.events
       this.isLoading = false
