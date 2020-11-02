@@ -9,37 +9,37 @@ export default new Vuex.Store({
     user: null
   },
   mutations: {
-    SET_USER_DATA(state, userData) {
+    SET_USER_DATA (state, userData) {
       state.user = userData
       localStorage.setItem('user', JSON.stringify(userData))
       axios.defaults.headers.common['Authorization'] = `Bearer ${userData.token
-        }`
+      }`
     },
-    CLEAR_USER_DATA() {
+    CLEAR_USER_DATA () {
       localStorage.removeItem('user')
       location.reload()
     }
 
   },
   actions: {
-    async register({ commit }, credentials) {
+    async register ({ commit }, credentials) {
       await axios.post('//localhost:3000/register', credentials)
         .then(({ data }) => {
-          commit('SET_USER_DATA', response.data)
+          commit('SET_USER_DATA', data)
         })
     },
-    async login({ commit }, credentials) {
+    async login ({ commit }, credentials) {
       await axios.post('//localhost:3000/login', credentials)
         .then(({ data }) => {
           commit('SET_USER_DATA', data)
         })
     },
-    logout({ commit }) {
+    logout ({ commit }) {
       commit('CLEAR_USER_DATA')
     }
   },
   getters: {
-    loggedIn(state) {
+    loggedIn (state) {
       return !!state.user
     }
   }

@@ -1,8 +1,14 @@
 <template>
   <div id="nav">
-    <router-link to="/"> Home </router-link>
-    <router-link v-if="loggedIn" to="/dashboard"> Dashboard </router-link>
-    <router-link v-if="!loggedIn" to="/login" class="button">Login</router-link>
+    <router-link to="/">
+      Home
+    </router-link>
+    <router-link v-if="loggedIn" to="/dashboard">
+      Dashboard
+    </router-link>
+    <router-link v-if="!loggedIn" to="/login" class="button">
+      Login
+    </router-link>
     <button v-else to="/logout" class="logoutButton" @click="logout">
       Logout
     </button>
@@ -14,13 +20,13 @@ import { authComputed } from '../vuex/helpers.js'
 
 export default {
   computed: {
-    ...authComputed,
+    ...authComputed
   },
   methods: {
-    logout() {
+    logout () {
       this.$store.dispatch('logout')
-    },
-  },
+    }
+  }
 }
 </script>
 

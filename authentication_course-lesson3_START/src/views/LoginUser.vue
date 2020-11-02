@@ -16,7 +16,9 @@
       </button>
 
       <p>{{ error }}</p>
-      <router-link to="/register">Don't have an account? Register.</router-link>
+      <router-link to="/register">
+        Don't have an account? Register.
+      </router-link>
     </form>
   </div>
 </template>
@@ -40,7 +42,7 @@ export default {
           this.$router.push({ name: 'dashboard' })
         })
         .catch(err => {
-          this.error = err.response.data.error;
+          this.error = err.response.data.error
         })
     }
   }
